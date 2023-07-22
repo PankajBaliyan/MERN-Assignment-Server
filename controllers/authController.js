@@ -12,14 +12,14 @@ const SESSION_SECRET_KEY = process.env.SESSION_SECRET_KEY;
 exports.register = async (req, res) => {
     const { name, username, password } = req.body;
 
-    // Convert the email to lowercase for case-insensitive comparison
-    const lowercaseUsername = username.toLowerCase();
-
     try {
         // Input validation
-        if (!name || !lowercaseUsername || !password) {
+        if (!name || !username || !password) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
+
+        // Convert the email to lowercase for case-insensitive comparison
+        const lowercaseUsername = username.toLowerCase();
 
         if (!validator.isEmail(lowercaseUsername)) {
             return res.status(400).json({ message: 'Invalid email format' });
