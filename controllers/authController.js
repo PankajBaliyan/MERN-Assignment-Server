@@ -4,6 +4,9 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const User = require('../models/User');
 const validator = require('validator');
+const jwt = require('jsonwebtoken');
+
+const SESSION_SECRET_KEY = process.env.SESSION_SECRET_KEY;
 
 //Register
 exports.register = async (req, res) => {
@@ -79,49 +82,18 @@ exports.login = (req, res, next) => {
                 console.error(err);
                 return res.status(500).json({ message: 'Server error' });
             }
-            res.status(200).json(user);
+
+            // Middleware to generate JWT after successful authentication
+            const { _id, username } = req.user;
+            const token = jwt.sign(
+                { userId: _id, username },
+                SESSION_SECRET_KEY,
+                { expiresIn: '1h' },
+            );
+            res.status(200).json({ user, token });
         });
     })(req, res, next);
 };
-
-// Logout
-// exports.logout = (req, res) => {
-//     const loggedOutUser = req.user; // Retrieve the currently logged-in user
-
-//     req.logout(function (err) {
-//         if (err) {
-//             console.error(err);
-//             return res.status(500).json({ message: 'Server error' });
-//         }
-
-//         // Include the logged-out user information in the response if available
-//         if (loggedOutUser) {
-//             res.status(200).json({
-//                 message: 'Logged out successfully',
-//                 user: loggedOutUser,
-//             });
-//         } else {
-//             res.status(200).json({ message: 'Logged out successfully' });
-//         }
-//     });
-// };
-
-//Get Single User Details
-// exports.getUserDetails = (req, res) => {
-//     const userId = req.params.id;
-
-//     User.findById(userId)
-//         .then((user) => {
-//             if (!user) {
-//                 return res.status(404).json({ message: 'User not found' });
-//             }
-//             res.json(user);
-//         })
-//         .catch((error) => {
-//             console.error('Failed to get user details', error);
-//             res.status(500).json({ message: 'Failed to get user details' });
-//         });
-// };
 
 // Get all users list
 exports.getAllUsers = (req, res) => {
@@ -142,35 +114,6 @@ exports.getAllUsers = (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
-
-//Update Password
-// exports.updatePassword = async (req, res) => {
-//     const userId = req.params.id;
-//     const { currentPassword, newPassword } = req.body;
-
-//     try {
-//         const user = await User.findById(userId);
-//         if (!user) {
-//             return res.status(404).json({ message: 'User not found' });
-//         }
-
-//         const isMatch = await bcrypt.compare(currentPassword, user.password);
-//         if (!isMatch) {
-//             return res
-//                 .status(401)
-//                 .json({ message: 'Incorrect current password' });
-//         }
-
-//         const hashedPassword = await bcrypt.hash(newPassword, 10);
-//         user.password = hashedPassword;
-//         await user.save();
-
-//         res.json({ message: 'Password updated successfully' });
-//     } catch (error) {
-//         console.error('Failed to update password', error);
-//         res.status(500).json({ message: 'Failed to update password' });
-//     }
-// };
 
 //Update User Details
 exports.updateUserDetails = async (req, res) => {
@@ -206,7 +149,6 @@ exports.updateUserDetails = async (req, res) => {
 };
 
 //Delete User
-// DELETE /users/:userId - Delete a user by their userId
 exports.deleteUser = async (req, res) => {
     const userId = req.params.id;
 

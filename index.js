@@ -2,11 +2,12 @@ const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 
+// env setup
+require('dotenv').config();
+
 // Routes Import
 const authRoutes = require('./routes/authRoutes');
 
-// env setup
-require('dotenv').config();
 
 // eslint-disable-next-line no-unused-vars
 const passportConfig = require('./passportConfig');

@@ -2,7 +2,7 @@
 
 ## Create Users
 
-POST - http://localhost:3001/auth/register
+POST - http://localhost:3001/users
 
 ### Sample user
 
@@ -18,7 +18,7 @@ POST - http://localhost:3001/auth/register
 
 ## Get all users (list)
 
-GET - http://localhost:3001/auth/users
+GET - http://localhost:3001/users
 
 ### Sample users
 
