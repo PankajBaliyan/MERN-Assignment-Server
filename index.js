@@ -8,7 +8,6 @@ require('dotenv').config();
 // Routes Import
 const authRoutes = require('./routes/authRoutes');
 
-
 // eslint-disable-next-line no-unused-vars
 const passportConfig = require('./passportConfig');
 const { connectMongoose } = require('./database-setup');

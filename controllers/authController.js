@@ -12,13 +12,16 @@ const SESSION_SECRET_KEY = process.env.SESSION_SECRET_KEY;
 exports.register = async (req, res) => {
     const { name, username, password } = req.body;
 
+    // Convert the email to lowercase for case-insensitive comparison
+    const lowercaseUsername = username.toLowerCase();
+
     try {
         // Input validation
-        if (!name || !username || !password) {
+        if (!name || !lowercaseUsername || !password) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
-        if (!validator.isEmail(username)) {
+        if (!validator.isEmail(lowercaseUsername)) {
             return res.status(400).json({ message: 'Invalid email format' });
         }
 
@@ -31,7 +34,9 @@ exports.register = async (req, res) => {
             });
         }
         // Check if the user already exists
-        const existingUser = await User.findOne({ username });
+        const existingUser = await User.findOne({
+            username: lowercaseUsername,
+        });
         if (existingUser) {
             return res.status(409).json({ message: 'User Already Exists' });
         }
@@ -42,7 +47,7 @@ exports.register = async (req, res) => {
         // Create a new user
         const user = new User({
             name,
-            username,
+            username: lowercaseUsername,
             password: hashedPassword,
         });
 
