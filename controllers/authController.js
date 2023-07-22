@@ -176,10 +176,6 @@ exports.getAllUsers = (req, res) => {
 exports.updateUserDetails = async (req, res) => {
     const { name, username, password } = req.body;
     const userId = req.params.id;
-    console.log(userId)
-    if(name) console.log(name)
-    if(username) console.log(username)
-    if(password)console.log(password)
 
     try {
         // Find the user by the provided userId
